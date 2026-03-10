@@ -58,7 +58,10 @@ public class RecipeService {
     }
 
     public Recipe findRecipeByCode(String recipeCode) {
-        // TODO: занятие 2 - поиск в recipes
-        return null;
+        Recipe recipe = recipes.get(recipeCode);
+        if (recipe == null) {
+            throw new RecipeNotFoundException(recipeCode);
+        }
+        return recipe;
     }
 }

@@ -1,5 +1,7 @@
 package resto.model;
 
+import lombok.Data;
+
 @Data
 public class StorageZone {
     private String id;
@@ -58,6 +60,7 @@ public class StorageZone {
         }
         this.capacity = capacity;
     }
+
     private void setTemperature() {
         switch (zoneType) {
             case REFRIGERATOR:

@@ -14,7 +14,7 @@ public enum Unit {
     private final double base;
 
     public UntiType getType() {return type;}
-    public double getDouble() {return base;}
+    public double getBase() {return base;}
 
     Unit(UnitType type, double base) {
         this.type = type;

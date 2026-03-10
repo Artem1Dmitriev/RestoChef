@@ -2,6 +2,7 @@ package resto.model;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
+import lombok.Data;
 
 @Data
 public class FoodVendor {
