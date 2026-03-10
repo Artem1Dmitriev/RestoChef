@@ -1,63 +1,78 @@
 package resto.model;
 
+@Data
 public class StorageZone {
     private String id;
     private String name;
     private ZoneType zoneType;
+    @Setter(AccessLevel.NONE)
     private double temperature;
     private double capacity;
+    @Setter(AccessLevel.NONE)
     private double currentLoad;
 
     public StorageZone(String id, String name, ZoneType zoneType, double capacity) {
         this.id = id;
         this.name = name;
         this.zoneType = zoneType;
-        this.capacity = capacity;
+        setTemperature();
+        setCapacity(capacity);
         this.currentLoad = 0.0;
-        // TODO: занятие 1 - установить температуру по умолчанию в зависимости от zoneType
-        // TODO: REFRIGERATOR: +4, FREEZER: -15, WINE_CELLAR: +12, DRY_STORAGE/BAR: +20
     }
 
-    // TODO: занятие 1 - добавить валидацию в сеттеры (capacity > 0)
-
     public boolean canAccept(double amount) {
-        // TODO: занятие 1 - проверить что currentLoad + amount <= capacity
-        return false;
+        return currentLoad + amount <= capacity;
     }
 
     public void addLoad(double amount) {
-        // TODO: занятие 1 - увеличить currentLoad на amount
+        if (!canAccept(amount) || amount < 0) {
+            throw new IllegalArgumentException("Попробовать можно, но оно того стоит?");
+        }
+        currentLoad += amount;
     }
 
     public void removeLoad(double amount) {
-        // TODO: занятие 1 - уменьшить currentLoad на amount
+        if (currentLoad < amount || amount < 0) {
+            throw new IllegalArgumentException("Перебор по оптимизации");
+        }
+        currentLoad -= amount;
     }
 
     public boolean isTemperatureSafe(IngredientCategory category) {
-        // TODO: занятие 1 - проверить температуру для категории:
-        // TODO: MEAT/FISH/DAIRY: только REFRIGERATOR/FREEZER (temp <= +6 или <= -12)
-        // TODO: WINE_CELLAR: только для BEVERAGES (вино)
-        // TODO: DRY_STORAGE: для остальных категорий
-        return false;
+        switch (category) {
+            case MEAT:
+            case FISH:
+            case DAIRY:
+                return zoneType == ZoneType.REFRIGERATOR || zoneType == ZoneType.FREEZER;
+            case BEVERAGES:
+                return zoneType == ZoneType.WINE_CELLAR;
+            default:
+                return zoneType == ZoneType.DRY_STORAGE;
+        }
     }
 
-    // Геттеры/сеттеры...
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public ZoneType getZoneType() { return zoneType; }
-    public void setZoneType(ZoneType zoneType) { this.zoneType = zoneType; }
-    public double getTemperature() { return temperature; }
-    public void setTemperature(double temperature) { this.temperature = temperature; }
-    public double getCapacity() { return capacity; }
-    public void setCapacity(double capacity) { this.capacity = capacity; }
-    public double getCurrentLoad() { return currentLoad; }
-    public void setCurrentLoad(double currentLoad) { this.currentLoad = currentLoad; }
-
-    @Override
-    public String toString() {
-        // TODO: занятие 1 - улучшить формат вывода
-        return "StorageZone[" + id + "] " + name + " (" + zoneType + ")";
+    // может быть стоит проверить на capacity >= currentLoad, но пока опустим
+    public void setCapacity(double capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Вместимость не может быть меньше нуля");
+        }
+        this.capacity = capacity;
+    }
+    private void setTemperature() {
+        switch (zoneType) {
+            case REFRIGERATOR:
+                this.temperature = 4.0;
+                break;
+            case FREEZER:
+                this.temperature = -15.0;
+                break;
+            case WINE_CELLAR:
+                this.temperature = 12.0;
+                break;
+            case DRY_STORAGE:
+            case BAR:
+                this.temperature = 20.0;
+                break;
+        }
     }
 }

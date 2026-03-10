@@ -1,5 +1,7 @@
 package resto.model;
 
+// Задание 1 пока используем Data, которое даёт встроенные геттеры, сеттеры и toString. Позже, если будет нужно - исправим.
+@Data
 public class Ingredient {
     private String id;
     private String name;
@@ -20,19 +22,5 @@ public class Ingredient {
         this.supplierId = "";
         this.shelfLifeDays = 0;
         this.minStockLevel = 0.0;
-    }
-
-    // TODO: занятие 1 - добавить геттеры/сеттеры для всех полей
-
-    public double convertUnit(double amount, String fromUnit) {
-        // TODO: занятие 1 - конвертация единиц: кг ↔ г (1000), л ↔ мл (1000), шт ↔ шт (1)
-        // TODO: вернуть amount в целевых единицах (unit)
-        return amount;
-    }
-
-    @Override
-    public String toString() {
-        // TODO: занятие 1 - сделать читаемый формат через String.format()
-        return "Ingredient[" + id + "] " + name + " (" + category + ")";
     }
 }
