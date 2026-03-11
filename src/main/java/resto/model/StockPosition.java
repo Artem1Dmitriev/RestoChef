@@ -1,7 +1,10 @@
 package resto.model;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import lombok.Data;
 
+@Data
 public class StockPosition {
     private String positionId;
     private Ingredient ingredient;
@@ -18,66 +21,66 @@ public class StockPosition {
         this.ingredient = ingredient;
         this.zone = zone;
         this.quantity = quantity;
+        // может ли reserved быть больше quantity?
         this.reserved = 0.0;
         this.receivedDate = LocalDate.now();
-        this.expiryDate = expiryDate;
         this.isOpened = false;
+        setExpiryDate(expiryDate);
+        setQuantity(quantity);
     }
-
-    // TODO: занятие 1 - добавить валидацию в конструктор (quantity > 0, expiryDate > today)
-
     public double getAvailable() {
-        // TODO: занятие 1 - вернуть quantity - reserved
-        return 0;
+        return quantity - reserved;
     }
 
     public void reserve(double amount) {
-        // TODO: занятие 1 - проверить что getAvailable() >= amount, увеличить reserved
+        double available = getAvailable();
+        if (available >= amount) {
+            reserved += amount;
+        }
+        else {
+            throw new IllegalArgumentException("Зарезервировано. Можно потратить " + available);
+        }
     }
 
     public void releaseReservation(double amount) {
-        // TODO: занятие 1 - уменьшить reserved на amount (не меньше 0)
+        if (amount > reserved) {
+            throw new IllegalArgumentException("Столько и не просили");
+        }
+        reserved -= amount;
     }
 
     public void writeOff(double amount) {
-        // TODO: занятие 1 - уменьшить quantity на amount, проверить что не меньше reserved
+        double nextQuantity = quantity - amount;
+        if (nextQuantity < reserved) {
+            throw new IllegalArgumentException("Нельзя брать с резерва");
+        }
+        quantity = nextQuantity;
     }
 
     public boolean isExpired() {
-        // TODO: занятие 1 - проверить что LocalDate.now() > expiryDate
-        return false;
+        return LocalDate.now().isAfter(expiryDate);
     }
 
-    public int getDaysUntilExpiry() {
-        // TODO: занятие 1 - рассчитать дней до expiryDate (может быть отрицательным если просрочено)
-        return 0;
+    public long getDaysUntilExpiry() {
+        return ChronoUnit.DAYS.between(LocalDate.now(), expiryDate);
     }
 
     public void markOpened() {
         // TODO: занятие 1 - установить isOpened = true, скорректировать shelfLife
     }
 
-    // Геттеры/сеттеры...
-    public String getPositionId() { return positionId; }
-    public void setPositionId(String positionId) { this.positionId = positionId; }
-    public Ingredient getIngredient() { return ingredient; }
-    public void setIngredient(Ingredient ingredient) { this.ingredient = ingredient; }
-    public StorageZone getZone() { return zone; }
-    public void setZone(StorageZone zone) { this.zone = zone; }
-    public double getQuantity() { return quantity; }
-    public void setQuantity(double quantity) { this.quantity = quantity; }
-    public double getReserved() { return reserved; }
-    public void setReserved(double reserved) { this.reserved = reserved; }
-    public LocalDate getReceivedDate() { return receivedDate; }
-    public void setReceivedDate(LocalDate receivedDate) { this.receivedDate = receivedDate; }
-    public LocalDate getExpiryDate() { return expiryDate; }
-    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
-    public boolean isOpened() { return isOpened; }
-    public void setOpened(boolean opened) { isOpened = opened; }
-
-    @Override
-    public String toString() {
-        // TODO: занятие 1 - сделать читаемый формат
-        return "StockPosition[" + positionId + "] " + ingredient.getName() + ": " + quantity + " " + ingredient.getUnit();
+    public void setQuantity(double quantity) {
+        if (quantity <= 0.0) {
+            throw new IllegalArgumentException("Количество не может быть меньше нуля");
+        }
+        this.quantity = quantity;
     }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        if (expiryDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Уже пропало :(");
+        }
+        this.expiryDate = expiryDate;
+    }
+
 }

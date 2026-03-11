@@ -6,7 +6,9 @@ import resto.model.*;
 
 import java.time.LocalDate;
 import java.util.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class InventoryService {
     private final Map<String, Ingredient> ingredientCatalog;
     private final Map<String, List<StockPosition>> stockByIngredient;

@@ -1,8 +1,9 @@
 package resto.model;
 
 import lombok.Data;
-import resto.component.UnitConversionService;
+import resto.component.UnitConversion;
 
+// TODO: убрать unit. Приравнивать будем в RecipeService.addIngridientToRecipe
 @Data
 public class RecipeLine {
     private String id;
@@ -27,9 +28,9 @@ public class RecipeLine {
     }
 
     public boolean isWithinNorm(double actual, int portions) {
-        planned = calculateForPortions(portions);
+        double planned = calculateForPortions(portions);
         if (planned == 0) {return false;}
-        deviation = Math.abs(actual - planned) / planned * 100
+        double deviation = Math.abs(actual - planned) / planned * 100;
         return deviation <= normDeviationPercent;
     }
 
@@ -38,10 +39,8 @@ public class RecipeLine {
         if (inputUnit.equalsIgnoreCase(baseUnit)) {
             this.quantityPerPortion = inputQuantity;
         } else {
-            //  TODO: вынести конвертацию в сервисный слой.
-            UnitConversionService converter = new UnitConversionService();
-            double converted = converter.convertUnit(inputQuantity, inputUnit, baseUnit);
-            this.quantityPerPortion = converted;
+            UnitConversion converter = new UnitConversion();
+            this.quantityPerPortion = converter.convertUnit(inputQuantity, inputUnit, baseUnit);
         }
         this.unit = baseUnit;
     }

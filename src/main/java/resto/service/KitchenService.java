@@ -7,7 +7,9 @@ import resto.validation.NormValidator;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class KitchenService {
     private final Map<String, KitchenOrder> orders;
     private final InventoryService inventoryService;

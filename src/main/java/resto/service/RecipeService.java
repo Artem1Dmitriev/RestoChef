@@ -3,9 +3,11 @@ package resto.service;
 import resto.exception.*;
 import resto.logger.Logger;
 import resto.model.*;
-
 import java.util.*;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class RecipeService {
     private final Map<String, Recipe> recipes;
     private final InventoryService inventoryService;
@@ -57,11 +59,30 @@ public class RecipeService {
         return null;
     }
 
-    public Recipe findRecipeByCode(String recipeCode) {
+    public Recipe findRecipeByCode(String recipeCode) throws RecipeNotFoundException {
         Recipe recipe = recipes.get(recipeCode);
         if (recipe == null) {
             throw new RecipeNotFoundException(recipeCode);
         }
         return recipe;
+    }
+    // вынесем из Recipe, т.к. это обязанность сервиса
+    public boolean canPrepare(Recipe recipe, int portions) {
+        Map<String, Double> requirements = recipe.calculateRequirements(portions);
+        for (Map.Entry<String, Double> entry : requirements.entrySet()) {
+            if (inventoryService.getAvailableStock(entry.getKey()) < entry.getValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    // KitchenOrder -> NormCalculator -> сюда, вдруг будем переиспользовать
+    public RecipeLine findRecipeLine(String recipeCode, String ingredientId) throws RecipeNotFoundException {
+        Recipe recipe = findRecipeByCode(recipeCode); // уже есть метод для получения рецепта
+        return recipe.getLines().stream()
+                .filter(line -> line.getIngredient().getId().equals(ingredientId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Ингредиент " + ingredientId + " не найден в рецепте " + recipeCode));
     }
 }

@@ -4,7 +4,8 @@ import resto.exception.*;
 import resto.model.IngredientCategory;
 import resto.model.StockPosition;
 import resto.model.StorageZone;
-
+import org.springframework.stereotype.Component;
+@Component
 public class StockValidator {
 
     public void validateExpiry(StockPosition position) throws ExpiredIngredientException {

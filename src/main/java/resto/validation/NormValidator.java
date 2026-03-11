@@ -1,7 +1,8 @@
 package resto.validation;
 
 import resto.exception.NormViolationException;
-
+import org.springframework.stereotype.Component;
+@Component
 public class NormValidator {
 
     public void validateConsumption(String ingredientId, double planned, double actual) 

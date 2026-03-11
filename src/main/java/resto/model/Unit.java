@@ -13,7 +13,7 @@ public enum Unit {
     private final UnitType type;
     private final double base;
 
-    public UntiType getType() {return type;}
+    public UnitType getType() {return type;}
     public double getBase() {return base;}
 
     Unit(UnitType type, double base) {
@@ -21,7 +21,7 @@ public enum Unit {
         this.base = base;
     }
 
-    private enum UnitType {
+    public enum UnitType {
         MASS, VOL, COUNT
     }
 }

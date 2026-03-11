@@ -1,6 +1,8 @@
 package resto.model;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 @Data
 public class StorageZone {
@@ -41,16 +43,11 @@ public class StorageZone {
     }
 
     public boolean isTemperatureSafe(IngredientCategory category) {
-        switch (category) {
-            case MEAT:
-            case FISH:
-            case DAIRY:
-                return zoneType == ZoneType.REFRIGERATOR || zoneType == ZoneType.FREEZER;
-            case BEVERAGES:
-                return zoneType == ZoneType.WINE_CELLAR;
-            default:
-                return zoneType == ZoneType.DRY_STORAGE;
-        }
+        return switch (category) {
+            case MEAT, FISH, DAIRY -> zoneType == ZoneType.REFRIGERATOR || zoneType == ZoneType.FREEZER;
+            case BEVERAGES -> zoneType == ZoneType.WINE_CELLAR;
+            default -> zoneType == ZoneType.DRY_STORAGE;
+        };
     }
 
     // может быть стоит проверить на capacity >= currentLoad, но пока опустим

@@ -1,7 +1,6 @@
 package resto.model;
 
 import resto.recipe.CostCalculable;
-import resto.service.InventoryService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ public class Recipe implements CostCalculable {
         this.preparationTimeMinutes = 0;
         this.chefNotes = "";
     }
-    publice void addIngredient(Ingredient ingredient, double quantity, String unit) {
+    public void addIngredient(Ingredient ingredient, double quantity, String unit) {
         RecipeLine line = new RecipeLine(ingredient,quantity,unit);
         lines.add(line);
     }
@@ -35,8 +34,8 @@ public class Recipe implements CostCalculable {
     public double calculateFoodCost(int portions) {
         if (portions <= 0) return 0.0;
         double totalCost =  0.0;
-        for (Recipe line : lines) {
-            totalCost += line.calculatCostForPortions(portions);
+        for (RecipeLine line : lines) {
+            totalCost += line.calculateCostForPortions(portions);
         }
         return totalCost;
     }
@@ -48,24 +47,9 @@ public class Recipe implements CostCalculable {
         for (RecipeLine line : lines) {
             String ingredientId = line.getIngredient().getId();
             double required = line.calculateForPortions(portions);
-            // либо новый либо добавить к старому
+            // либо новый, либо добавить к старому
             requirements.merge(ingredientId, required, Double::sum);
         }
         return requirements;
-    }
-
-    public boolean canPrepare(int portions, InventoryService inventory) {
-        if (portions <= 0) return true;
-
-        Map<String, Double> requirements = calculateRequirements(portions);
-        for (Map.Entry<String, Double> entry : requirements.entrySet()) {
-            String ingredientId = entry.getKey();
-            double needed = entry.getValue();
-            double available = inventory.getAvailableStock(ingredientId);
-            if (available < needed) {
-                return false;
-            }
-        }
-        return true;
     }
 }
