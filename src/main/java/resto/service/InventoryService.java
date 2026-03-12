@@ -87,9 +87,11 @@ public class InventoryService {
         // TODO: занятие 2 - получить зону по id
         return null;
     }
-
-    public Ingredient getIngredient(String ingredientId) {
-        // TODO: занятие 2 - получить ингредиент из каталога
-        return null;
+    public Ingredient getIngredient(String ingredientId) throws IngridientNotFoundException {
+        Ingredient ingredient = ingredientCatalog.get(ingredientId);
+        if (ingredient == null) {
+            throw new IngridientNotFoundException(ingredientId);
+        }
+        return ingredient;
     }
 }

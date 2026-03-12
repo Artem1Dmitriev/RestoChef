@@ -25,8 +25,7 @@ public class Recipe implements CostCalculable {
         this.preparationTimeMinutes = 0;
         this.chefNotes = "";
     }
-    public void addIngredient(Ingredient ingredient, double quantity, String unit) {
-        RecipeLine line = new RecipeLine(ingredient,quantity,unit);
+    public void addRecipeLine(RecipeLine line) {
         lines.add(line);
     }
 

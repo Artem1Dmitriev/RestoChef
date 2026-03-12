@@ -18,8 +18,7 @@ public class StorageZone {
     public StorageZone(String id, String name, ZoneType zoneType, double capacity) {
         this.id = id;
         this.name = name;
-        this.zoneType = zoneType;
-        setTemperature();
+        setZoneType(zoneType);
         setCapacity(capacity);
         this.currentLoad = 0.0;
     }
@@ -58,21 +57,8 @@ public class StorageZone {
         this.capacity = capacity;
     }
 
-    private void setTemperature() {
-        switch (zoneType) {
-            case REFRIGERATOR:
-                this.temperature = 4.0;
-                break;
-            case FREEZER:
-                this.temperature = -15.0;
-                break;
-            case WINE_CELLAR:
-                this.temperature = 12.0;
-                break;
-            case DRY_STORAGE:
-            case BAR:
-                this.temperature = 20.0;
-                break;
-        }
+    private void setZoneType(ZoneType zoneType) {
+        this.zoneType = zoneType;
+        this.temperature = zoneType.getDefaultTemperature();
     }
 }

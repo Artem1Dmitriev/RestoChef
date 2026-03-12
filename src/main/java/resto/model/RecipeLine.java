@@ -9,13 +9,12 @@ public class RecipeLine {
     private String id;
     private Ingredient ingredient;
     private double quantityPerPortion;
-    private String unit;
     private double normDeviationPercent;
 
-    public RecipeLine(Ingredient ingredient, double quantityPerPortion, String unit) {
+    public RecipeLine(Ingredient ingredient, double quantityPerPortion) {
         this.id = ingredient.getId() + "-line";
         this.ingredient = ingredient;
-        setUnit(unit, quantityPerPortion);
+        this.quantityPerPortion = quantityPerPortion;
         this.normDeviationPercent = 5.0; // по умолчанию 5%
     }
 
@@ -32,16 +31,5 @@ public class RecipeLine {
         if (planned == 0) {return false;}
         double deviation = Math.abs(actual - planned) / planned * 100;
         return deviation <= normDeviationPercent;
-    }
-
-    private void setUnit(String inputUnit, double inputQuantity) {
-        String baseUnit = ingredient.getUnit();
-        if (inputUnit.equalsIgnoreCase(baseUnit)) {
-            this.quantityPerPortion = inputQuantity;
-        } else {
-            UnitConversion converter = new UnitConversion();
-            this.quantityPerPortion = converter.convertUnit(inputQuantity, inputUnit, baseUnit);
-        }
-        this.unit = baseUnit;
     }
 }

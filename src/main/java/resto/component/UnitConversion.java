@@ -10,7 +10,7 @@ public class UnitConversion {
         Unit fromUnit = getUnit(from);
         Unit toUnit = getUnit(to);
         if (fromUnit.getType() != toUnit.getType()) {
-            throw new IllegalArgumentException("Как-то не логично: " + fromUnit.getType() + " и " + toUnit.getType());
+            throw new IllegalArgumentException("Попытка привести одинаковые типы: " + fromUnit.getType());
         }
         double ratio = fromUnit.getBase() / toUnit.getBase();
         return amount * ratio;
@@ -23,7 +23,7 @@ public class UnitConversion {
             case "л", "l" -> Unit.L;
             case "мл", "ml" -> Unit.ML;
             case "шт", "pcs" -> Unit.PIECE;
-            default -> throw new IllegalArgumentException("Таких не знаем: " + name);
+            default -> throw new IllegalArgumentException("Неизвестный unit: " + name);
         };
     }
 }
