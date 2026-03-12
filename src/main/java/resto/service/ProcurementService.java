@@ -5,7 +5,9 @@ import resto.model.*;
 
 import java.time.LocalDate;
 import java.util.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProcurementService {
     private final InventoryService inventoryService;
     private final Map<String, FoodVendor> vendors;

@@ -3,7 +3,8 @@ package resto.validation;
 import resto.exception.*;
 import resto.model.Recipe;
 import resto.model.RecipeLine;
-
+import org.springframework.stereotype.Component;
+@Component
 public class RecipeValidator {
 
     public void validateRecipe(Recipe recipe) throws RecipeValidationException {

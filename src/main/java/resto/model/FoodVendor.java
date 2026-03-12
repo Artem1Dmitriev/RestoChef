@@ -1,7 +1,10 @@
 package resto.model;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
+import lombok.Data;
 
+@Data
 public class FoodVendor {
     private String id;
     private String companyName;
@@ -13,43 +16,45 @@ public class FoodVendor {
     private double minOrderAmount;
     private boolean isActive;
 
-    public FoodVendor(String id, String companyName, String contactPerson, 
-                     String phone, String email, IngredientCategory[] supplyCategories) {
+    public FoodVendor(String id, String companyName, String contactPerson,
+                      String phone, String email, IngredientCategory[] supplyCategories) {
         this.id = id;
         this.companyName = companyName;
         this.contactPerson = contactPerson;
-        this.phone = phone;
-        // TODO: занятие 1 - валидация email (формат)
-        this.email = email;
+        setPhone(phone);
+        setEmail(email);
         this.supplyCategories = supplyCategories;
         this.deliveryDays = 1;
         this.minOrderAmount = 0.0;
         this.isActive = true;
     }
 
-    // Геттеры/сеттеры...
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public String getCompanyName() { return companyName; }
-    public void setCompanyName(String companyName) { this.companyName = companyName; }
-    public String getContactPerson() { return contactPerson; }
-    public void setContactPerson(String contactPerson) { this.contactPerson = contactPerson; }
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public IngredientCategory[] getSupplyCategories() { return supplyCategories; }
-    public void setSupplyCategories(IngredientCategory[] supplyCategories) { this.supplyCategories = supplyCategories; }
-    public int getDeliveryDays() { return deliveryDays; }
-    public void setDeliveryDays(int deliveryDays) { this.deliveryDays = deliveryDays; }
-    public double getMinOrderAmount() { return minOrderAmount; }
-    public void setMinOrderAmount(double minOrderAmount) { this.minOrderAmount = minOrderAmount; }
-    public boolean isActive() { return isActive; }
-    public void setActive(boolean active) { isActive = active; }
+    public void setPhone(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            throw new IllegalArgumentException("Номер телефона пуст");
+        }
+        String cleaned = phone.replaceAll("[^0-9+]", "");
+        boolean hasPlus = cleaned.startsWith("+");
+        if (hasPlus) {
+            cleaned = cleaned.substring(1);
+        }
+        if (cleaned.startsWith("8")) {
+            cleaned = "7" + cleaned.substring(1);
+        }
+        if (cleaned.length() != 11 || !cleaned.startsWith("7")) {
+            throw new IllegalArgumentException("+7 или 8 + 10 цифр");
+        }
+        this.phone = "+7" + cleaned.substring(1);
+    }
 
-    @Override
-    public String toString() {
-        // TODO: занятие 1 - улучшить формат
-        return "FoodVendor[" + id + "] " + companyName + " (" + String.join(", ", Arrays.toString(supplyCategories)) + ")";
+    public void setEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email пуст");
+        }
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        if (!Pattern.matches(emailRegex, email)) {
+            throw new IllegalArgumentException("Неверный формат email");
+        }
+        this.email = email;
     }
 }

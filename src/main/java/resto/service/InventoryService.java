@@ -6,7 +6,9 @@ import resto.model.*;
 
 import java.time.LocalDate;
 import java.util.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class InventoryService {
     private final Map<String, Ingredient> ingredientCatalog;
     private final Map<String, List<StockPosition>> stockByIngredient;
@@ -85,9 +87,11 @@ public class InventoryService {
         // TODO: занятие 2 - получить зону по id
         return null;
     }
-
-    public Ingredient getIngredient(String ingredientId) {
-        // TODO: занятие 2 - получить ингредиент из каталога
-        return null;
+    public Ingredient getIngredient(String ingredientId) throws IngridientNotFoundException {
+        Ingredient ingredient = ingredientCatalog.get(ingredientId);
+        if (ingredient == null) {
+            throw new IngridientNotFoundException(ingredientId);
+        }
+        return ingredient;
     }
 }

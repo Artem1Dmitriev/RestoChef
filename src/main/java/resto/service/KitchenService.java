@@ -1,29 +1,28 @@
 package resto.service;
 
+import resto.component.NormCalculator;
 import resto.exception.*;
 import resto.logger.Logger;
 import resto.model.*;
-import resto.validation.NormValidator;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import org.springframework.stereotype.Service;
 
+@Service
 public class KitchenService {
     private final Map<String, KitchenOrder> orders;
     private final InventoryService inventoryService;
     private final RecipeService recipeService;
-    private final NormValidator normValidator;
+    private final NormCalculator normCalculator;
     private final Logger logger;
 
-    public KitchenService(InventoryService inventoryService, 
-                         RecipeService recipeService,
-                         NormValidator normValidator,
-                         Logger logger) {
-        this.orders = new HashMap<>();
+    public KitchenService(InventoryService inventoryService, RecipeService recipeService, NormCalculator normCalculator, Logger logger) {
         this.inventoryService = inventoryService;
         this.recipeService = recipeService;
-        this.normValidator = normValidator;
+        this.normCalculator = normCalculator;
         this.logger = logger;
+        this.orders = new HashMap<>();
     }
 
     public KitchenOrder createKitchenOrder(String recipeCode, int portions, String requestedBy) {
@@ -73,8 +72,16 @@ public class KitchenService {
     }
 
     public Map<String, Double> getNormViolations(String orderId) throws OrderNotFoundException {
-        // TODO: занятие 6 - вернуть ингредиенты с превышением нормы (>5%)
-        return new HashMap<>();
+        KitchenOrder order = orders.get(orderId);
+        if (order == null) {
+            throw new OrderNotFoundException(orderId);
+        }
+        try {
+            return normCalculator.getViolations(order);
+        } catch (RecipeNotFoundException | IngridientNotFoundInRecipeException e) {
+            logger.log("Ошибка при расчёте нарушений: " + e.getMessage());
+            return Collections.emptyMap();
+        }
     }
 
     public KitchenOrder getOrderById(String orderId) {

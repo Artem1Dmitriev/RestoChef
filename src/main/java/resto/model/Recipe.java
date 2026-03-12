@@ -1,13 +1,14 @@
 package resto.model;
 
 import resto.recipe.CostCalculable;
-import resto.service.InventoryService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
 
+@Data
 public class Recipe implements CostCalculable {
     private String recipeCode;
     private String dishName;
@@ -24,41 +25,30 @@ public class Recipe implements CostCalculable {
         this.preparationTimeMinutes = 0;
         this.chefNotes = "";
     }
-
-    // TODO: занятие 1 - добавить метод addIngredient(Ingredient ingredient, double quantity, String unit)
+    public void addRecipeLine(RecipeLine line) {
+        lines.add(line);
+    }
 
     @Override
     public double calculateFoodCost(int portions) {
-        // TODO: занятие 1 - суммировать calculateCostForPortions(portions) по всем lines
-        return 0;
+        if (portions <= 0) return 0.0;
+        double totalCost =  0.0;
+        for (RecipeLine line : lines) {
+            totalCost += line.calculateCostForPortions(portions);
+        }
+        return totalCost;
     }
 
     public Map<String, Double> calculateRequirements(int portions) {
-        // TODO: занятие 1 - создать Map<ingredientId, calculateForPortions(portions)>
-        return new HashMap<>();
-    }
+        Map<String, Double> requirements = new HashMap<>();
+        if (portions <= 0) return requirements;
 
-    public boolean canPrepare(int portions, InventoryService inventory) {
-        // TODO: занятие 1 - для каждого ингредиента проверить что inventory.getAvailableStock() >= требуемому
-        return false;
-    }
-
-    // Геттеры/сеттеры...
-    public String getRecipeCode() { return recipeCode; }
-    public void setRecipeCode(String recipeCode) { this.recipeCode = recipeCode; }
-    public String getDishName() { return dishName; }
-    public void setDishName(String dishName) { this.dishName = dishName; }
-    public DishCategory getDishCategory() { return dishCategory; }
-    public void setDishCategory(DishCategory dishCategory) { this.dishCategory = dishCategory; }
-    public List<RecipeLine> getLines() { return lines; }
-    public int getPreparationTimeMinutes() { return preparationTimeMinutes; }
-    public void setPreparationTimeMinutes(int preparationTimeMinutes) { this.preparationTimeMinutes = preparationTimeMinutes; }
-    public String getChefNotes() { return chefNotes; }
-    public void setChefNotes(String chefNotes) { this.chefNotes = chefNotes; }
-
-    @Override
-    public String toString() {
-        // TODO: занятие 1 - сделать читаемый формат
-        return "Recipe[" + recipeCode + "] " + dishName + " (" + dishCategory + ")";
+        for (RecipeLine line : lines) {
+            String ingredientId = line.getIngredient().getId();
+            double required = line.calculateForPortions(portions);
+            // либо новый, либо добавить к старому
+            requirements.merge(ingredientId, required, Double::sum);
+        }
+        return requirements;
     }
 }
