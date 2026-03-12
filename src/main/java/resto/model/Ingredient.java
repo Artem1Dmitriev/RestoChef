@@ -1,7 +1,7 @@
 package resto.model;
 
 import lombok.Data;
-// Задание 1 пока используем Data, которое даёт встроенные геттеры, сеттеры и toString. Позже, если будет нужно - исправим.
+
 @Data
 public class Ingredient {
     private String id;

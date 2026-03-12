@@ -1,5 +1,7 @@
 package resto.model;
 
+import java.util.Map;
+
 public enum ZoneType {
     DRY_STORAGE(20.0),    // сухой склад (+20°C)
     REFRIGERATOR(4.0),   // холодильник (+2...+6°C)
@@ -17,5 +19,35 @@ public enum ZoneType {
         return defaultTemperature;
     }
 
-    // TODO: занятие 3 - добавить метод getRecommendedCategories() возвращающий IngredientCategory[]
+    public IngredientCategory[] getRecommendedCategories() {
+        return switch (this) {
+            case DRY_STORAGE -> new IngredientCategory[] {
+                    IngredientCategory.VEGETABLES,
+                    IngredientCategory.FRUITS,
+                    IngredientCategory.GRAINS,
+                    IngredientCategory.SPICES,
+                    IngredientCategory.OILS,
+                    IngredientCategory.BEVERAGES
+            };
+            case REFRIGERATOR -> new IngredientCategory[] {
+                    IngredientCategory.MEAT,
+                    IngredientCategory.FISH,
+                    IngredientCategory.DAIRY,
+                    IngredientCategory.VEGETABLES,
+                    IngredientCategory.FRUITS,
+                    IngredientCategory.BEVERAGES
+            };
+            case FREEZER -> new IngredientCategory[] {
+                    IngredientCategory.MEAT,
+                    IngredientCategory.FISH
+            };
+            case WINE_CELLAR -> new IngredientCategory[] {
+                    IngredientCategory.BEVERAGES
+            };
+            case BAR -> new IngredientCategory[] {
+                    IngredientCategory.BEVERAGES
+            };
+        };
+
+    }
 }
