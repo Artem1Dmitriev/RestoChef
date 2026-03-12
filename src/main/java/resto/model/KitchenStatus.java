@@ -11,11 +11,24 @@ public enum KitchenStatus {
     SERVED;              // подано
 
     public boolean canTransitionTo(KitchenStatus newStatus) {
-        // TODO: занятие 4 - реализовать логику переходов:
-        // REQUESTED → APPROVED → PICKED → DELIVERED_TO_KITCHEN → ACCEPTED → PREPARING → READY → SERVED
-        return false;
+        if (newStatus == null) return false;
+        return switch (this) {
+            case REQUESTED -> newStatus == APPROVED;
+            case APPROVED -> newStatus == PICKED;
+            case PICKED -> newStatus == DELIVERED_TO_KITCHEN;
+            case DELIVERED_TO_KITCHEN -> newStatus == ACCEPTED;
+            case ACCEPTED -> newStatus == PREPARING;
+            case PREPARING -> newStatus == READY;
+            case READY -> newStatus == SERVED;
+            case SERVED -> false;
+        };
     }
-    
-    // TODO: занятие 3 - добавить метод isTerminal() для SERVED
-    // TODO: занятие 3 - добавить метод requiresChefAction() для APPROVED, ACCEPTED, READY
+
+    public boolean isTerminal() {
+        return this == SERVED;
+    }
+
+    public boolean requiresChefAction() {
+        return this == APPROVED || this == ACCEPTED || this == READY;
+    }
 }

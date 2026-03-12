@@ -83,6 +83,19 @@ public class KitchenService {
             return Collections.emptyMap();
         }
     }
+    public boolean canChangeStatus(KitchenOrder order, KitchenStatus newStatus) {
+        return order.getStatus().canTransitionTo(newStatus);
+    }
+    public void changeStatus(KitchenOrder order, KitchenStatus newStatus) {
+        if (!canChangeStatus(order, newStatus)) {
+            throw new IllegalStateException("Нельзя изменить  " + order.getStatus() + " на " + newStatus);
+        }
+        order.setStatus(newStatus);
+        logger.log("Статус заказа " + order.getOrderId() + " изменён на " + newStatus);
+        if (newStatus == KitchenStatus.READY) {
+            order.setCompletedAt(LocalDateTime.now());
+        }
+    }
 
     public KitchenOrder getOrderById(String orderId) {
         // TODO: занятие 2 - поиск в orders

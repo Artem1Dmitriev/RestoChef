@@ -28,15 +28,6 @@ public class KitchenOrder {
         this.actualConsumption = new HashMap<>();
     }
 
-    public boolean canChangeStatus(KitchenStatus newStatus) {
-        // TODO: занятие 4 - делегировать в KitchenStatus.canTransitionTo(newStatus)
-        return false;
-    }
-
-    public void changeStatus(KitchenStatus newStatus) {
-        // TODO: занятие 4 - проверить canChangeStatus, обновить статус, залогировать
-    }
-
     public void recordActualConsumption(String ingredientId, double actualQuantity) {
         actualConsumption.put(ingredientId, actualQuantity);
     }
